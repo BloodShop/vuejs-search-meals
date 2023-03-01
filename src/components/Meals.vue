@@ -1,14 +1,15 @@
 <template>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 p-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5 px-8">
         <MealItem v-for="meal of meals" :key="meal.idMeal" :meal="meal" />
     </div>
-    <div v-if="!meals.length" class="flex justify-center text-gray-600">
+    <div v-if="!meals.length" class="flex justify-center text-gray-600 p-8">
         No Meals to offer
     </div>
 </template>
 
 <script setup>
-import MealItem from "./MealItem.vue";
+import MealItem from "./Mealitem.vue";
+
 const { meals } = defineProps({
     meals: {
         required: true,

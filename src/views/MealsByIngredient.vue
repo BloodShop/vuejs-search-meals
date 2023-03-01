@@ -1,4 +1,9 @@
 <template>
+    <div class="p-8 pb-0">
+        <h1 class="text-5xl font-bold mb-4 text-orange-500">
+            Meals for {{ ingredient.strIngredient }}
+        </h1>
+    </div>
     <Meals :meals="meals" />
 </template>
 
@@ -9,6 +14,7 @@ import store from "../store";
 import Meals from "../components/Meals.vue";
 
 const route = useRoute();
+const ingredient = computed(() => store.state.ingredient);
 const meals = computed(() => store.state.mealsByIngredient);
 
 onMounted(() => {

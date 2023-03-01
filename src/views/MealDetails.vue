@@ -44,7 +44,7 @@
                 </ul>
             </div>
             <div class="mt-4">
-                <YoutubeButton :href="meal.strYoutube">Youtube</YoutubeButton>
+                <YoutubeButton :href="meal.strYoutube" />
                 <a
                     :href="meal.strSource"
                     target="_blank"
