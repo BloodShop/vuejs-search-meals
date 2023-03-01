@@ -1,13 +1,18 @@
 <template>
-    <div>By Ingredient</div>
+    <Meals :meals="meals" />
 </template>
 
 <script setup>
-import { onMounted } from "vue";
-import axiosClient from "../axiosClient";
+import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
+import store from "../store";
+import Meals from "../components/Meals.vue";
+
+const route = useRoute();
+const meals = computed(() => store.state.mealsByIngredient);
 
 onMounted(() => {
-    axiosClient;
+    store.dispatch("searchMealsByIngredient", route.params.ingredient);
 });
 </script>
 
