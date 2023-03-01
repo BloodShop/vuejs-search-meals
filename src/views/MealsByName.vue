@@ -1,5 +1,5 @@
 <template>
-    <div class="p-8">
+    <div class="p-8 pb-0">
         <input
             type="text"
             v-model="keyword"
@@ -14,11 +14,15 @@
             :key="meal.idMeal"
             class="bg-white shadow rounded-xl"
         >
-            <img
-                :src="meal.strMealThumb"
-                alt="meal.strMeal"
-                class="rounded-t-xl w-full h-48 object-cover"
-            />
+            <router-link
+                :to="{ name: 'mealDetails', params: { id: meal.idMeal } }"
+            >
+                <img
+                    :src="meal.strMealThumb"
+                    alt="meal.strMeal"
+                    class="rounded-t-xl w-full h-48 object-cover"
+                />
+            </router-link>
             <div class="p-3">
                 <h3 class="font-semibold">{{ meal.strMeal }}</h3>
                 <p class="mb-4">
@@ -26,12 +30,9 @@
                     aspernatur, non ex aliquam nobis assumenda.
                 </p>
                 <div class="flex items-center justify-between">
-                    <a
-                        :href="meal.strYoutube"
-                        target="_blank"
-                        class="px-3 py-2 rounded border-2 text-white border-red-600 bg-red-500 hover:bg-red-600 transition-colors"
-                        >Youtube</a
-                    >
+                    <YoutubeButton :href="meal.strYoutube"
+                        >Youtube
+                    </YoutubeButton>
                     <router-link
                         class="px-3 py-2 rounded border-2 text-white border-purple-600 bg-purple-500 hover:bg-purple-600 transition-colors"
                         to="/"
@@ -44,12 +45,22 @@
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import store from "../store";
+import YoutubeButton from "../components/YoutubeButton.vue";
 
+const route = useRoute();
 const meals = computed(() => store.state.searchedMeals);
 const keyword = ref("");
 function searchMeals() {
     store.dispatch("searchMeals", keyword.value);
 }
+
+onMounted(() => {
+    keyword.value = route.params.name;
+    if (keyword.value) {
+        searchMeals();
+    }
+});
 </script>
