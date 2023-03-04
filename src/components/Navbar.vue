@@ -22,10 +22,48 @@
                 class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
                 >Meals by Ingredient
             </router-link>
+            <router-link
+                v-if="!isLoggedIn"
+                :to="{ name: 'login' }"
+                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
+                >Login
+            </router-link>
+            <router-link
+                v-if="!isLoggedIn"
+                :to="{ name: 'register' }"
+                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
+                >Register
+            </router-link>
+            <button
+                v-else
+                @click="handleLogout"
+                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
+            >
+                Logout
+            </button>
         </div>
     </header>
 </template>
 
-<script setup></script>
+<script setup>
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
+import { onMounted, ref } from "vue";
+
+const isLoggedIn = ref(false);
+let auth;
+
+const handleLogout = () => {
+    signOut(auth).then(() => {
+        router.replace({ name: "login" });
+    });
+};
+
+onMounted(() => {
+    auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+        isLoggedIn.value = !!user;
+    });
+});
+</script>
 
 <style></style>
