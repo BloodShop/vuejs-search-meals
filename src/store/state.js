@@ -3,4 +3,5 @@ export default {
     mealsByLetter: [],
     mealsByIngredient: [],
     ingredient: {},
+    user: null,
 };

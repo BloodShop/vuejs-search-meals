@@ -1,25 +1,29 @@
 <template>
     <div>
         Login
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleLogin">
             <div class="email">
-                <input type="email" placeholder="Email" v-model="email" />
+                <input
+                    type="email"
+                    placeholder="Email"
+                    v-model="login_form.email"
+                />
             </div>
             <div class="password">
                 <input
                     type="password"
                     placeholder="Password"
-                    v-model="password"
+                    v-model="login_form.password"
                 />
             </div>
             <button class="btn bg-orange-500">Login</button>
         </form>
         <div>
-            <button class="btn bg-orange-300" @click.prevent="signInWithGoogle">
+            <button class="btn bg-orange-300" @click.prevent="loginWithGoogle">
                 Sign in with Google
             </button>
         </div>
-        <div class="error" v-if="error">{{ error }}</div>
+        <div class="error" v-if="error">{{ error.message }}</div>
         <span>
             Need an account? Click here to
             <router-link to="/register">register</router-link>
@@ -29,66 +33,22 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-import {
-    getAuth,
-    signInWithEmailAndPassword,
-    GoogleAuthProvider,
-    signInWithPopup,
-} from "firebase/auth";
+import { useStore } from "vuex";
 
-const router = useRouter();
-const email = ref(""),
-    password = ref(""),
-    error = ref("");
+const login_form = ref({}),
+    error = ref(""),
+    store = useStore();
 
-const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(getAuth(), provider)
-        .then((userCredential) => {
-            console.log(userCredential.user);
-            router.replace({ name: "home" });
-        })
-        .catch((err) => {
-            error.value = err;
-            console.log(error);
-        });
+const handleLogin = () => {
+    store.dispatch("login", login_form.value).catch((err) => {
+        error.value = err;
+    });
 };
 
-const handleSubmit = () => {
-    signInWithEmailAndPassword(getAuth(), email.value, password.value)
-        .then((userCredential) => {
-            var user = userCredential.user;
-            console.log(user);
-            router.replace({ name: "secret" });
-        })
-        .catch((err) => {
-            console.log(err, err.code);
-
-            switch (err.code) {
-                case "auth/invalid-email":
-                    error.value = "Your email address appears to be malformed.";
-                    break;
-                case "auth/wrong-password":
-                    error.value = "Your password is wrong.";
-                    break;
-                case "auth/user-not-found":
-                    error.value = "User with this email doesn't exist.";
-                    break;
-                case "auth/user-disabled":
-                    error.value = "User with this email has been disabled.";
-                    break;
-                case "auth/too-many-requests":
-                    error.value = "Too many requests. Try again later.";
-                    break;
-                case "auth/operation-not-allowed":
-                    error.value =
-                        "Signing in with Email and Password is not enabled.";
-                    break;
-                default:
-                    error.value = "An undefined Error happened.";
-            }
-        });
+const loginWithGoogle = () => {
+    store.dispatch("googleLogin").catch((err) => {
+        error.value = err;
+    });
 };
 </script>
 

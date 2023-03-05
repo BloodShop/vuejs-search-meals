@@ -6,7 +6,7 @@
         >
             Home
         </router-link>
-        <div class="flex items-center gap-1">
+        <div v-if="store.state.user" class="flex items-center gap-1">
             <router-link
                 :to="{ name: 'byName' }"
                 class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
@@ -22,48 +22,39 @@
                 class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
                 >Meals by Ingredient
             </router-link>
-            <router-link
-                v-if="!isLoggedIn"
-                :to="{ name: 'login' }"
-                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
-                >Login
-            </router-link>
-            <router-link
-                v-if="!isLoggedIn"
-                :to="{ name: 'register' }"
-                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
-                >Register
-            </router-link>
             <button
-                v-else
                 @click="handleLogout"
                 class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
             >
                 Logout
             </button>
         </div>
+        <div class="inline-flex items-center px-2 h-full" v-else>
+            <router-link
+                :to="{ name: 'login' }"
+                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
+                >Login
+            </router-link>
+            <router-link
+                :to="{ name: 'register' }"
+                class="inline-flex items-center px-2 h-full transition-colors hover:bg-orange-500 hover:text-white"
+                >Register
+            </router-link>
+        </div>
     </header>
 </template>
 
 <script setup>
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { onMounted, ref } from "vue";
+import { useStore } from "vuex";
+import { onBeforeMount } from "vue";
 
-const isLoggedIn = ref(false);
-let auth;
+const store = useStore();
+
+onBeforeMount(() => {
+    store.dispatch("fetchUser");
+});
 
 const handleLogout = () => {
-    signOut(auth).then(() => {
-        router.replace({ name: "login" });
-    });
+    store.dispatch("logout");
 };
-
-onMounted(() => {
-    auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-        isLoggedIn.value = !!user;
-    });
-});
 </script>
-
-<style></style>

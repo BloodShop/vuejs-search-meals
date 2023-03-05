@@ -1,15 +1,19 @@
 <template>
     <div>
         <div v-if="error" class="error">{{ error.message }}</div>
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleRegister">
             Register
             <div class="email">
-                <input type="email" v-model="email" placeholder="Email" />
+                <input
+                    type="email"
+                    v-model="register_form.email"
+                    placeholder="Email"
+                />
             </div>
             <div class="password">
                 <input
                     type="password"
-                    v-model="password"
+                    v-model="register_form.password"
                     placeholder="Password"
                 />
             </div>
@@ -20,37 +24,16 @@
 
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { useStore } from "vuex";
 
-const email = ref(""),
-    password = ref(""),
-    error = ref(""),
-    router = useRouter();
+const store = useStore(),
+    register_form = ref({}),
+    error = ref("");
 
-const handleSubmit = () => {
-    createUserWithEmailAndPassword(getAuth(), email.value, password.value)
-        .then((userCredential) => {
-            console.log(userCredential.user);
-            router.replace({ name: "" });
-        })
-        .catch((err) => {
-            error.value = err;
-            console.log(error);
-        });
-};
-
-const signInWithGoogle = () => {
-    const provider = new GoogleAuthProvider();
-    signInWithPopup(getAuth(), provider)
-        .then((userCredential) => {
-            console.log(userCredential.user);
-            router.replace({ name: "home" });
-        })
-        .catch((err) => {
-            error.value = err;
-            console.log(error);
-        });
+const handleRegister = () => {
+    store.dispatch("register", register_form.value).catch((err) => {
+        error.value = err;
+    });
 };
 </script>
 
